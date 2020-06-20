@@ -25,7 +25,20 @@ public class PessoaService {
 		return pessoaRepository.findAll();
 	}
 
-	public Pessoa getById(String id) {
-		return pessoaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	public Pessoa buscarPorId(String id) {
+		return pessoaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pessoa não encontrada"));
+	}
+
+	@Transactional
+	public void deletarPorId(String id) {
+		this.buscarPorId(id);
+		pessoaRepository.deleteById(id);
+	}
+
+	public Pessoa editar(Pessoa pessoa, String id) {
+		Pessoa pessoaPersistida = this.buscarPorId(id);
+		pessoaPersistida.setNome(pessoa.getNome());
+		pessoaPersistida.setIdade(pessoa.getIdade());
+		return pessoaRepository.save(pessoaPersistida);
 	}
 }
